@@ -1,0 +1,10 @@
+C:\Users\Aryan Agrawal\Desktop\CS243Lab\Lab1\CALCULATOR\CALCULATOR\bin\Debug\CALCULATOR.exe.config
+C:\Users\Aryan Agrawal\Desktop\CS243Lab\Lab1\CALCULATOR\CALCULATOR\bin\Debug\CALCULATOR.exe
+C:\Users\Aryan Agrawal\Desktop\CS243Lab\Lab1\CALCULATOR\CALCULATOR\bin\Debug\CALCULATOR.pdb
+C:\Users\Aryan Agrawal\Desktop\CS243Lab\Lab1\CALCULATOR\CALCULATOR\bin\Debug\CALCULATOR.xml
+C:\Users\Aryan Agrawal\Desktop\CS243Lab\Lab1\CALCULATOR\CALCULATOR\obj\Debug\CALCULATOR.Calculator.resources
+C:\Users\Aryan Agrawal\Desktop\CS243Lab\Lab1\CALCULATOR\CALCULATOR\obj\Debug\CALCULATOR.Resources.resources
+C:\Users\Aryan Agrawal\Desktop\CS243Lab\Lab1\CALCULATOR\CALCULATOR\obj\Debug\CALCULATOR.vbproj.GenerateResource.Cache
+C:\Users\Aryan Agrawal\Desktop\CS243Lab\Lab1\CALCULATOR\CALCULATOR\obj\Debug\CALCULATOR.exe
+C:\Users\Aryan Agrawal\Desktop\CS243Lab\Lab1\CALCULATOR\CALCULATOR\obj\Debug\CALCULATOR.xml
+C:\Users\Aryan Agrawal\Desktop\CS243Lab\Lab1\CALCULATOR\CALCULATOR\obj\Debug\CALCULATOR.pdb

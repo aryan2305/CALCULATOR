@@ -1,13 +1,10 @@
-<<<<<<< HEAD
-﻿Public Class Calculator
-=======
 
 
 Public Class Calculator
->>>>>>> 694f0f5d99a8109788417c550acfeeef2e532455
     Dim ans As Double = 0
     ' Call this routine to compute the resulting value of an expression part
     Function DMAS(expr As String)
+        MessageBox.Show(expr)
         If expr.Contains("(") Or expr.Contains(")") Then
             Return "ERROR"
         End If
@@ -206,6 +203,18 @@ Public Class Calculator
         ' Iterate through the characters of input string starting at the position of final character
         For index = input.Length() - 1 To 0 Step -1
             ' For each character perform a check if its value is '('
+            If index <> 0 And input(index) = "(" Then
+                If IsNumeric(input(index - 1)) Or input(index - 1) = "." Then
+                    Return "Error"
+                End If
+            End If
+
+            If index <> input.Length() - 1 And input(index) = ")" Then
+                If IsNumeric(input(index + 1)) Or input(index + 1) = "." Then
+                    Return "Error"
+                End If
+            End If
+
             If input(index) = "(" Or index = 0 Then
                 Dim sb As String = ""
                 Dim n As Int32 = 0
@@ -238,6 +247,8 @@ Public Class Calculator
                         ' Increment the n loop counter variable by 1
                         n = n + 1
                     End While
+                    n -= 1
+
                     If exists <> True Then
                         Dim r As Int32 = 0
                         ' Iterate through the array of positions
@@ -263,6 +274,7 @@ Public Class Calculator
                 ' add the value of position to the array
                 If exists = False Then
                     Array.Resize(oe, oe.Length + 1)
+                    MessageBox.Show(n)
                     oe(t) = n
                     t = t + 1
                 End If
@@ -283,16 +295,7 @@ Public Class Calculator
             For n = index To strings.Count() - 1 Step 1
                 ' For each part substitute the substring containing the current part of the expression
                 ' with its numerical value without parentheses.
-                strings(n) = strings.ElementAt(n).Replace("+(" + strings.Item(index) + ")", "+" + Result)
-                strings(n) = strings.ElementAt(n).Replace("-(" + strings.Item(index) + ")", "-" + Result)
-                strings(n) = strings.ElementAt(n).Replace("*(" + strings.Item(index) + ")", "*" + Result)
-                strings(n) = strings.ElementAt(n).Replace("/(" + strings.Item(index) + ")", "/" + Result)
-
-
-                strings(n) = strings.ElementAt(n).Replace("(" + strings.Item(index) + ")+", Result + "+")
-                strings(n) = strings.ElementAt(n).Replace("(" + strings.Item(index) + ")-", Result + "-")
-                strings(n) = strings.ElementAt(n).Replace("(" + strings.Item(index) + ")*", Result + "*")
-                strings(n) = strings.ElementAt(n).Replace("(" + strings.Item(index) + ")/", Result + "/")
+                strings(n) = strings.ElementAt(n).Replace("(" + strings.Item(index) + ")", Result)
             Next
         Next
 
@@ -359,7 +362,6 @@ Public Class Calculator
         'brackets opening '(' or closing ')'
 
         Dim b_brac As Button = sender
-
         If txtbox_display.Text <> "0" And txtbox_display.Text <> "-------INPUT ERROR-------" And ans = 0 Then
             txtbox_display.Text += b_brac.Text
         Else
@@ -386,8 +388,4 @@ Public Class Calculator
         txtbox_display.Text = "0"
     End Sub
 
-<<<<<<< HEAD
 End Class
-=======
-End Class
->>>>>>> 694f0f5d99a8109788417c550acfeeef2e532455

@@ -1,14 +1,18 @@
-﻿
-
-Public Class Calculator
+﻿Public Class Calculator
+    Dim ans As Double = 0
     ' Call this routine to compute the resulting value of an expression part
-    Function Compute(expr As String)
+    Function DMAS(expr As String)
+        If expr.Contains("(") Or expr.Contains(")") Then
+            Return "ERROR"
+        End If
         Dim Result As Double = 0
         Dim val As String = ""
         Dim op() As String = {"+", "-", "*", "/"}
         Dim strings As List(Of String) = New List(Of String)
         ' Iterate through each character and for each character
         ' perform a check if it has a numberical value
+        Dim count As Int16 = 0
+        ' Count stores the number of operations in the string which is useful to print the output not as 0
         For index = 0 To expr.Length() - 1 Step 1
             If IsNumeric(expr(index)) Then
                 val = Nothing
@@ -49,16 +53,57 @@ Public Class Calculator
             End If
         Next
 
-        
+        'If there is "-" at the start then we are adding 0 at the start so that the whole operation is done as "0-value" = "-value"
+        If strings(0) = "-" Then
+            strings.Insert(0, "0")
+        End If
 
         Dim n As Int32 = 0
-        ' Execute the following loop until the string no longer contains '*' and '/' characters
-        While strings.Contains("*") Or strings.Contains("/")
+        ' Execute the following loop until the string no longer contains '/' characters'
+        '--------------DIVISION---------------
+
+        While strings.Contains("/")
             Dim found As Boolean = False
             ' Iterate through the array of strings
             While n < strings.Count() And found = False
-                ' For each string perform a check if the following string contains only one character - '*'
+                ' For each string perform a check if the following string contains only one character - '/'
+                If strings(n) = op(3) Then
+                    count += 1
+                    ' If so, retrieve the first op1 and second op2 operands which are the previous and
+                    ' next elements of the following array of strings respectively
+                    Dim op1 As Double = Double.Parse(strings(n - 1))
+                    Dim op2 As Double = Double.Parse(strings(n + 1))
+                    If op2 = 0 Then
+                        Return "MATH ERROR"
+                    End If
+                    ' Perform division and accumulate the result in Res variable
+                    Dim Res = CDbl(op1 / op2)
+                    ' Remove the previous element from the array of strings
+                    strings.RemoveAt(n - 1)
+                    ' Assign the resulting value from Res variable to the position n - 1 in the array of strings
+                    strings(n - 1) = Res
+                    ' Remove the current element from the array of strings
+                    strings.RemoveAt(n)
+                    ' Assign the Result variable the resulting value so far
+                    Result = Res
+                    ' If the operator '/' found break the loop execution
+                    found = True
+                    n = 0
+                End If
+                n = n + 1
+            End While
+        End While
+        n = 0
+
+        ' Execute the following loop until the string no longer contains '*' characters'
+        '--------------MULTIPLICATION---------------------'
+
+        While strings.Contains("*")
+            Dim found As Boolean = False
+            ' Iterate through the array of strings
+            While n < strings.Count() And found = False
                 If strings(n) = op(2) Then
+                    count += 1
                     ' If so, retrieve the first op1 and second op2 operands which are the previous and
                     ' next elements of the following array of strings respectively
                     Dim op1 As Double = Double.Parse(strings(n - 1))
@@ -77,39 +122,22 @@ Public Class Calculator
                     found = True
                     n = 0
                 End If
-
-                ' For each string perform a check if the following string contains only one character - '/'
-                If strings(n) = op(3) Then
-                    ' If so, retrieve the first op1 and second op2 operands which are the previous and
-                    ' next elements of the following array of strings respectively
-                    Dim op1 As Double = Double.Parse(strings(n - 1))
-                    Dim op2 As Double = Double.Parse(strings(n + 1))
-                    ' Perform division and accumulate the result in Res variable
-                    Dim Res = CDbl(op1 / op2)
-                    ' Remove the previous element from the array of strings
-                    strings.RemoveAt(n - 1)
-                    ' Assign the resulting value from Res variable to the position n - 1 in the array of strings
-                    strings(n - 1) = Res
-                    ' Remove the current element from the array of strings
-                    strings.RemoveAt(n)
-                    ' Assign the Result variable the resulting value so far
-                    Result = Res
-                    ' If the operator '/' found break the loop execution
-                    found = True
-                    n = 0
-                End If
                 n = n + 1
             End While
         End While
-
         n = 0
+
         ' Execute the following loop until the string no longer contains '+' and '-' characters
+        '------------ADDITION AND SUBTRACTION ------------------
+
+
         While strings.Contains("+") Or strings.Contains("-")
             Dim found As Boolean = False
             ' Iterate through the array of strings
             While n < strings.Count() And found = False
                 ' For each string perform a check if the following string contains only one character - '+'
                 If strings(n) = op(0) Then
+                    count += 1
                     ' If so, retrieve the first op1 and second op2 operands which are the previous and
                     ' next elements of the following array of strings respectively
                     Dim op1 As Double = Double.Parse(strings(n - 1))
@@ -133,6 +161,7 @@ Public Class Calculator
                 If strings(n) = op(1) Then
                     ' If so, retrieve the first op1 and second op2 operands which are the previous and
                     ' next elements of the following array of strings respectively
+                    count += 1
                     Dim op1 As Double = Double.Parse(strings(n - 1))
                     Dim op2 As Double = Double.Parse(strings(n + 1))
                     ' Perform subtraction and accumulate the result in Res variable
@@ -152,12 +181,18 @@ Public Class Calculator
                 n = n + 1
             End While
         End While
+
+        ' If count = 0 and the input is not 0 then the output will be the corresponding number in the input
+        If count = 0 Then
+            Result = Double.Parse(strings(0))
+        End If
+
         Return Result
     End Function
 
 
     ' Call this routine to perform the actual mathematic expression parsing
-    Function Parse(input As String)
+    Function Evaluator(input As String)
         Dim t As Double = 0
         Dim oe(0) As Double
         Dim strings As List(Of String) = New List(Of String)
@@ -171,7 +206,11 @@ Public Class Calculator
                 ' Perform a check if this is the first character in string
                 If index = 0 Then
                     ' If so assign n variable to the value of variable index
-                    n = index
+                    If input(index) = "(" Then
+                        n = 1
+                    Else
+                        n = index
+                    End If
                     ' Otherwise assign n variable to the value of variable index + 1
                 Else : n = index + 1
                 End If
@@ -231,20 +270,29 @@ Public Class Calculator
         ' Iterate through the array of the expression parts
         For index = 0 To strings.Count() - 1 Step 1
             ' Compute the result for the current part of the expression
-            
-            Dim Result As String = Compute(strings.Item(index)).ToString()
+
+            Dim Result As String = DMAS(strings.Item(index)).ToString()
 
             ' Iterate through all succeeding parts of the expression
             For n = index To strings.Count() - 1 Step 1
                 ' For each part substitute the substring containing the current part of the expression
                 ' with its numerical value without parentheses.
-                strings(n) = strings.ElementAt(n).Replace("(" + strings.Item(index) + ")", Result)
+                strings(n) = strings.ElementAt(n).Replace("+(" + strings.Item(index) + ")", "+" + Result)
+                strings(n) = strings.ElementAt(n).Replace("-(" + strings.Item(index) + ")", "-" + Result)
+                strings(n) = strings.ElementAt(n).Replace("*(" + strings.Item(index) + ")", "*" + Result)
+                strings(n) = strings.ElementAt(n).Replace("/(" + strings.Item(index) + ")", "/" + Result)
+
+
+                strings(n) = strings.ElementAt(n).Replace("(" + strings.Item(index) + ")+", Result + "+")
+                strings(n) = strings.ElementAt(n).Replace("(" + strings.Item(index) + ")-", Result + "-")
+                strings(n) = strings.ElementAt(n).Replace("(" + strings.Item(index) + ")*", Result + "*")
+                strings(n) = strings.ElementAt(n).Replace("(" + strings.Item(index) + ")/", Result + "/")
             Next
         Next
 
         ' Compute the numerical value of the last part (e.g. the numerical resulting value of the entire expression)
         ' and return this value at the end of the following routine execution.
-        Return Compute(strings.Item(strings.Count() - 1))
+        Return DMAS(strings.Item(strings.Count() - 1))
     End Function
 
     Private Sub Button_Click(sender As Object, e As EventArgs) Handles btn_num1.Click, btn_num9.Click, btn_num8.Click, btn_num7.Click, btn_num6.Click, btn_num5.Click, btn_num4.Click, btn_num3.Click, btn_num2.Click, btn_num0.Click
@@ -252,19 +300,26 @@ Public Class Calculator
 
         Dim b_num As Button = sender
 
-        If txtbox_display.Text <> "0" Then
+        If txtbox_display.Text <> "0" And txtbox_display.Text <> "-------INPUT ERROR-------" And ans = 0 Then
             txtbox_display.Text += b_num.Text
+
         Else
             txtbox_display.Text = b_num.Text
+            ans = 0
         End If
     End Sub
 
     Private Sub btn_dot_Click(sender As Object, e As EventArgs) Handles btn_dot.Click
         'dot '.' input
 
-        If txtbox_display.Text <> "0" Then
+        If txtbox_display.Text <> "-------INPUT ERROR-------" And ans = 0 Then
             txtbox_display.Text += "."
+        Else
+            txtbox_display.Text = "0."
+            ans = 0
         End If
+
+
     End Sub
 
     Private Sub Button_Arith_Click(sender As Object, e As EventArgs) Handles btn_sub.Click, btn_multiply.Click, btn_divide.Click, btn_add.Click
@@ -272,8 +327,15 @@ Public Class Calculator
 
         Dim b_arith As Button = sender
 
-        If txtbox_display.Text <> "0" Then
+        If txtbox_display.Text <> "0" And txtbox_display.Text <> "-------INPUT ERROR-------" Then
             txtbox_display.Text += b_arith.Text
+            ans = 0
+        Else
+            If b_arith.Text = "-" Then
+                txtbox_display.Text = "-"
+                ans = 0
+            End If
+
         End If
     End Sub
 
@@ -292,35 +354,30 @@ Public Class Calculator
 
         Dim b_brac As Button = sender
 
-        If txtbox_display.Text <> "0" Then
+        If txtbox_display.Text <> "0" And txtbox_display.Text <> "-------INPUT ERROR-------" And ans = 0 Then
             txtbox_display.Text += b_brac.Text
         Else
             txtbox_display.Text = b_brac.Text
+            ans = 0
         End If
     End Sub
 
     Private Sub btn_equal_Click(sender As Object, e As EventArgs) Handles btn_equal.Click
         'Evaluate the expression
-
-        Dim dt As New DataTable
-        Dim result As Object
-        Dim ans As Double
         Try
-            result = dt.Compute(txtbox_display.Text, "")
-            ans = Parse(txtbox_display.Text.ToString)
+            ans = Evaluator(txtbox_display.Text.ToString)
             txtbox_display.Text = ans
+
         Catch ex As Exception
-            MessageBox.Show(String.Format("Error: {0}", ex.Message))
-            txtbox_display.Text = "0"
+            txtbox_display.Text = "-------INPUT ERROR-------"
+
         End Try
     End Sub
 
     Private Sub btn_clr_Click(sender As Object, e As EventArgs) Handles btn_clr.Click
         'Clear the textbox_display
-
+        ans = 0
         txtbox_display.Text = "0"
     End Sub
-
-
 
 End Class

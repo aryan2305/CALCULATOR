@@ -1,4 +1,10 @@
+<<<<<<< HEAD
 ﻿Public Class Calculator
+=======
+
+
+Public Class Calculator
+>>>>>>> 694f0f5d99a8109788417c550acfeeef2e532455
     Dim ans As Double = 0
     ' Call this routine to compute the resulting value of an expression part
     Function DMAS(expr As String)
@@ -380,4 +386,8 @@
         txtbox_display.Text = "0"
     End Sub
 
+<<<<<<< HEAD
 End Class
+=======
+End Class
+>>>>>>> 694f0f5d99a8109788417c550acfeeef2e532455

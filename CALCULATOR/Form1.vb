@@ -1,13 +1,14 @@
 
-
 Public Class Calculator
     Dim ans As Double = 0
     ' Call this routine to compute the resulting value of an expression part
     Function DMAS(expr As String)
-        MessageBox.Show(expr)
+
+        'To confirm that the string input in the dmas doesn't conatain "(" or ")"
         If expr.Contains("(") Or expr.Contains(")") Then
             Return "ERROR"
         End If
+
         Dim Result As Double = 0
         Dim val As String = ""
         Dim op() As String = {"+", "-", "*", "/"}
@@ -53,6 +54,8 @@ Public Class Calculator
             ElseIf expr(index) = op(3) Then
                 ' If so, add the string containg the following character only to the the array of strings
                 strings.Add(op(3))
+            ElseIf Not IsNumeric(expr(index)) And Not expr(index) = " " Then
+                Return "MATH ERROR"
             End If
         Next
 
@@ -75,6 +78,15 @@ Public Class Calculator
                     ' If so, retrieve the first op1 and second op2 operands which are the previous and
                     ' next elements of the following array of strings respectively
                     Dim op1 As Double = Double.Parse(strings(n - 1))
+                    '--------CODE TO DEAL WITH NEGATIVE NUMBERS--------------
+                    If strings(n + 1) = "-" Then
+
+                        strings.Insert(n - 1, "-")
+                        strings.RemoveAt(n + 2)
+                        strings.Insert(0, "0")
+                        Continue While
+                    End If
+                    '--------------------------------------------------------
                     Dim op2 As Double = Double.Parse(strings(n + 1))
                     If op2 = 0 Then
                         Return "MATH ERROR"
@@ -110,6 +122,15 @@ Public Class Calculator
                     ' If so, retrieve the first op1 and second op2 operands which are the previous and
                     ' next elements of the following array of strings respectively
                     Dim op1 As Double = Double.Parse(strings(n - 1))
+                    '--------CODE TO DEAL WITH NEGATIVE NUMBERS--------------
+                    If strings(n + 1) = "-" Then
+
+                        strings.Insert(n - 1, "-")
+                        strings.RemoveAt(n + 2)
+                        strings.Insert(0, "0")
+                        Continue While
+                    End If
+                    '-------------------------------------------------------
                     Dim op2 As Double = Double.Parse(strings(n + 1))
                     ' Perform multiplication and accumulate the result in Res variable
                     Dim Res = CDbl(op1 * op2)
@@ -141,9 +162,17 @@ Public Class Calculator
                 ' For each string perform a check if the following string contains only one character - '+'
                 If strings(n) = op(0) Then
                     count += 1
+
+
+
                     ' If so, retrieve the first op1 and second op2 operands which are the previous and
                     ' next elements of the following array of strings respectively
                     Dim op1 As Double = Double.Parse(strings(n - 1))
+                    '--------CODE TO DEAL WITH NEGATIVE NUMBERS--------------
+                    If strings(n + 1) = "-" Then
+                        strings.RemoveAt(n)
+                        Continue While
+                    End If
                     Dim op2 As Double = Double.Parse(strings(n + 1))
                     ' Perform addition and accumulate the result in Res variable
                     Dim Res = CDbl(op1 + op2)
@@ -164,8 +193,17 @@ Public Class Calculator
                 If strings(n) = op(1) Then
                     ' If so, retrieve the first op1 and second op2 operands which are the previous and
                     ' next elements of the following array of strings respectively
+
                     count += 1
                     Dim op1 As Double = Double.Parse(strings(n - 1))
+                    '--------CODE TO DEAL WITH NEGATIVE NUMBERS--------------
+                    If strings(n + 1) = "-" Then
+                        strings(n) = "+"
+                        strings.RemoveAt(n + 1)
+
+                        Continue While
+                    End If
+                    '--------------------------------------------------------
                     Dim op2 As Double = Double.Parse(strings(n + 1))
                     ' Perform subtraction and accumulate the result in Res variable
                     Dim Res = CDbl(op1 - op2)
@@ -196,35 +234,28 @@ Public Class Calculator
 
     ' Call this routine to perform the actual mathematic expression parsing
     Function Evaluator(input As String)
+
         Dim t As Double = 0
         Dim oe(0) As Double
         Dim strings As List(Of String) = New List(Of String)
-
+        Dim flag As Int16 = 0
+        Dim sb As String = ""
         ' Iterate through the characters of input string starting at the position of final character
         For index = input.Length() - 1 To 0 Step -1
+
             ' For each character perform a check if its value is '('
-            If index <> 0 And input(index) = "(" Then
-                If IsNumeric(input(index - 1)) Or input(index - 1) = "." Then
-                    Return "Error"
-                End If
-            End If
-
-            If index <> input.Length() - 1 And input(index) = ")" Then
-                If IsNumeric(input(index + 1)) Or input(index + 1) = "." Then
-                    Return "Error"
-                End If
-            End If
-
             If input(index) = "(" Or index = 0 Then
-                Dim sb As String = ""
+
+                If flag = 0 Then
+                    sb = ""
+                End If
                 Dim n As Int32 = 0
+
                 ' Perform a check if this is the first character in string
                 If index = 0 Then
                     ' If so assign n variable to the value of variable index
                     If input(index) = "(" Then
                         n = 1
-                    Else
-                        n = index
                     End If
                     ' Otherwise assign n variable to the value of variable index + 1
                 Else : n = index + 1
@@ -237,17 +268,20 @@ Public Class Calculator
                     ' Perform the iterations stepping forward into each succeeding character
                     ' starting at the position n = index + 1 until we've found a character equal to ')'
                     While n < input.Length() And bracket = False
+
                         ' Check if the current character is not ')'.
                         If input(n) <> ")" Then
                             ' If so, append it to the temporary string buffer
                             sb += input(n)
                             ' Otherwise break the loop execution
-                        Else : bracket = True
+                        Else
+                            bracket = True
+                            Continue While
                         End If
                         ' Increment the n loop counter variable by 1
                         n = n + 1
                     End While
-                    n -= 1
+
 
                     If exists <> True Then
                         Dim r As Int32 = 0
@@ -274,7 +308,6 @@ Public Class Calculator
                 ' add the value of position to the array
                 If exists = False Then
                     Array.Resize(oe, oe.Length + 1)
-                    MessageBox.Show(n)
                     oe(t) = n
                     t = t + 1
                 End If
@@ -283,7 +316,13 @@ Public Class Calculator
                 strings.Add(sb)
 
             End If
+            If index = 0 And input(0) = "(" And flag = 0 Then
+                index = 1
+                flag = 1
+                sb = "("
+            End If
         Next
+
 
         ' Iterate through the array of the expression parts
         For index = 0 To strings.Count() - 1 Step 1
@@ -293,6 +332,7 @@ Public Class Calculator
 
             ' Iterate through all succeeding parts of the expression
             For n = index To strings.Count() - 1 Step 1
+
                 ' For each part substitute the substring containing the current part of the expression
                 ' with its numerical value without parentheses.
                 strings(n) = strings.ElementAt(n).Replace("(" + strings.Item(index) + ")", Result)
@@ -303,6 +343,48 @@ Public Class Calculator
         ' and return this value at the end of the following routine execution.
         Return DMAS(strings.Item(strings.Count() - 1))
     End Function
+
+    'To check the validity of the input expression
+    Function validator(expr As String)
+        Dim n As Int16 = expr.Length()
+        For index = 0 To n - 1 Step 1
+
+            'To check if an operator is follwed by an operator
+            If expr(index) = "+" Or expr(index) = "-" Or expr(index) = "*" Or expr(index) = "/" Then
+                If index = n - 1 Then Return "error"
+                If expr(index + 1) = "+" Or expr(index + 1) = "-" Or expr(index + 1) = "*" Or expr(index + 1) = "/" Then
+                    Return "error"
+                End If
+            End If
+
+            'To check if the bracket is preceeded by an operator only 
+            If index <> 0 And expr(index) = "(" Then
+                If IsNumeric(expr(index - 1)) Or expr(index - 1) = "." Then
+                    Return "Error"
+                End If
+            End If
+
+            'To check if the bracket is suceeded by an operator only
+            If index <> n - 1 And expr(index) = ")" Then
+                If IsNumeric(expr(index + 1)) Or expr(index + 1) = "." Then
+                    Return "Error"
+                End If
+            End If
+        Next
+        Return Evaluator(expr)
+    End Function
+
+    Private Sub btn_equal_Click(sender As Object, e As EventArgs) Handles btn_equal.Click
+        'Evaluate the expression
+        Try
+            ans = validator(txtbox_display.Text.ToString)
+            txtbox_display.Text = ans
+
+        Catch ex As Exception
+            txtbox_display.Text = "-------INPUT ERROR-------"
+
+        End Try
+    End Sub
 
     Private Sub Button_Click(sender As Object, e As EventArgs) Handles btn_num1.Click, btn_num9.Click, btn_num8.Click, btn_num7.Click, btn_num6.Click, btn_num5.Click, btn_num4.Click, btn_num3.Click, btn_num2.Click, btn_num0.Click
         '0,1 to 9 digit input
@@ -370,22 +452,13 @@ Public Class Calculator
         End If
     End Sub
 
-    Private Sub btn_equal_Click(sender As Object, e As EventArgs) Handles btn_equal.Click
-        'Evaluate the expression
-        Try
-            ans = Evaluator(txtbox_display.Text.ToString)
-            txtbox_display.Text = ans
 
-        Catch ex As Exception
-            txtbox_display.Text = "-------INPUT ERROR-------"
-
-        End Try
-    End Sub
 
     Private Sub btn_clr_Click(sender As Object, e As EventArgs) Handles btn_clr.Click
         'Clear the textbox_display
         ans = 0
         txtbox_display.Text = "0"
     End Sub
+
 
 End Class

@@ -1,4 +1,60 @@
 
+'-------------------------------------------------------------------CALCULATOR--------------------------------------------------------------------
+'
+'-------------------------------------------------------------------------------------------------------------------------------------------------
+'
+' GROUP 20
+' ---------
+' 170101013 ARYAN AGRAWAL
+' 170101050 PULIKONDA ROOP SAI RAKESH GUPTA
+' 160101017 AUTONU KRO
+'
+'---------------------------------------------------------------------------------------------------------------------------------------------------
+'
+' Functions Used:
+'
+'   1. DMAS:
+'         It evaluates the expression containing decimal values and operator accoriding to the DMAS rule.
+'
+'   2. Evaluator:
+'           It will parse the expression and divide it into substrings based on the brackets and send it for evaluation to DMAS function.   
+'
+'   3. validator:
+'           It checks the validity of the expression given as input based on the following factors:
+'               a. If the expression contains consecutive arithmetic operators
+'               b. If the opening bracket is precceded by the numerical value or a dot "."
+'               c. If the closing bracket is succeded by the numerical value or a dot "."
+'
+'----------------------------------------------------------------------------------------------------------------------------------------------------
+'
+' Algorithm:
+'
+'   1.	At the start the calculator will show 0 in the display and assign a variable ‘ans’ = 0. User will then enter the 
+'       string containing the operand and the operator and brackets (open bracket- ‘(‘and closed bracket- ‘)’). 
+'       Example Input: (2+3/2) + 5
+'
+'   2.  Expression is then send to "validator" function that checks the validity of the expression and sends it to the "Evaluator" 
+'       function for evaluation.
+'
+'   3.  "Evaluator" function then divides the expression based on brackets and stores in the list names "strings"
+'       Example : strings = { 2+3/2 , (2+3/2) + 5 }
+'
+'   4. It then sends each item in the list to DMAS function to get the result for tha expression and replace all the string containg 
+'      that bracket expression with its value.
+'      Example: strings = { 3.5 , 3.5 + 5 }
+'       
+'   5. It then sends the last and final expression rid of the brackets to DMAS function and return that value.
+'
+'   6. DMAS function takes the expression and evaluates by the DMAS rule.
+'      Example: 2+3/2 --> 2+1.5 --> 3.5
+'
+'----------------------------------------------------------------------------------------------------------------------------------------------------
+'
+'Data Structures Used:
+'
+'   1. List : To store the bracket expression in "Evaluator" function and to store the double values and operators in DMAS function. 
+'
+'------------------------------------------------------------------------------------------------------------------------------------------------------
 Public Class Calculator
     Dim ans As Double = 0
     ' Call this routine to compute the resulting value of an expression part

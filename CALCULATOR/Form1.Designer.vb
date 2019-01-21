@@ -247,7 +247,7 @@ Partial Class Calculator
         '
         'btn_backspace
         '
-        Me.btn_backspace.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btn_backspace.Font = New System.Drawing.Font("Arial Rounded MT Bold", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.btn_backspace.Location = New System.Drawing.Point(208, 49)
         Me.btn_backspace.Name = "btn_backspace"
         Me.btn_backspace.Size = New System.Drawing.Size(43, 38)

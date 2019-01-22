@@ -1,4 +1,3 @@
-
 '-------------------------------------------------------------------CALCULATOR--------------------------------------------------------------------
 '
 '-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -29,8 +28,8 @@
 '
 ' Algorithm:
 '
-'   1.	At the start the calculator will show 0 in the display and assign a variable ‘ans’ = 0. User will then enter the 
-'       string containing the operand and the operator and brackets (open bracket- ‘(‘and closed bracket- ‘)’). 
+'   1.	At the start the calculator will show 0 in the display and assign a variable â€˜ansâ€™ = 0. User will then enter the 
+'       string containing the operand and the operator and brackets (open bracket- â€˜(â€˜and closed bracket- â€˜)â€™). 
 '       Example Input: (2+3/2) + 5
 '
 '   2.  Expression is then send to "validator" function that checks the validity of the expression and sends it to the "Evaluator" 
@@ -55,6 +54,9 @@
 '   1. List : To store the bracket expression in "Evaluator" function and to store the double values and operators in DMAS function. 
 '
 '------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
 Public Class Calculator
     Dim ans As Double = 0
     ' Call this routine to compute the resulting value of an expression part
@@ -404,7 +406,9 @@ Public Class Calculator
     Function validator(expr As String)
         Dim n As Int16 = expr.Length()
         For index = 0 To n - 1 Step 1
-
+            If expr(index) = " " Then
+                Return "ERROR"
+            End If
             'To check if an operator is follwed by an operator
             If expr(index) = "+" Or expr(index) = "-" Or expr(index) = "*" Or expr(index) = "/" Then
                 If index = n - 1 Then Return "error"
@@ -430,7 +434,7 @@ Public Class Calculator
         Return Evaluator(expr)
     End Function
 
-    Private Sub btn_equal_Click(sender As Object, e As EventArgs) Handles btn_equal.Click
+    Private Sub btn_equal_Click(ByVal sender As System.Object, e As System.EventArgs) Handles btn_equal.Click
         'Evaluate the expression
         Try
             ans = validator(txtbox_display.Text.ToString)
@@ -442,21 +446,21 @@ Public Class Calculator
         End Try
     End Sub
 
-    Private Sub Button_Click(sender As Object, e As EventArgs) Handles btn_num1.Click, btn_num9.Click, btn_num8.Click, btn_num7.Click, btn_num6.Click, btn_num5.Click, btn_num4.Click, btn_num3.Click, btn_num2.Click, btn_num0.Click
+    Private Sub Button_Click(ByVal sender As System.Object, e As System.EventArgs) Handles btn_num1.Click, btn_num9.Click, btn_num8.Click, btn_num7.Click, btn_num6.Click, btn_num5.Click, btn_num4.Click, btn_num3.Click, btn_num2.Click, btn_num0.Click
         '0,1 to 9 digit input
 
         Dim b_num As Button = sender
-
+        Dim b_string As String = b_num.Text
         If txtbox_display.Text <> "0" And txtbox_display.Text <> "-------INPUT ERROR-------" And ans = 0 Then
-            txtbox_display.Text += b_num.Text
+            txtbox_display.Text += b_string(1)
 
         Else
-            txtbox_display.Text = b_num.Text
+            txtbox_display.Text = b_string(1)
             ans = 0
         End If
     End Sub
 
-    Private Sub btn_dot_Click(sender As Object, e As EventArgs) Handles btn_dot.Click
+    Private Sub btn_dot_Click(ByVal sender As System.Object, e As System.EventArgs) Handles btn_dot.Click
         'dot '.' input
 
         If txtbox_display.Text <> "-------INPUT ERROR-------" And ans = 0 Then
@@ -469,16 +473,16 @@ Public Class Calculator
 
     End Sub
 
-    Private Sub Button_Arith_Click(sender As Object, e As EventArgs) Handles btn_sub.Click, btn_multiply.Click, btn_divide.Click, btn_add.Click
+    Private Sub Button_Arith_Click(ByVal sender As System.Object, e As System.EventArgs) Handles btn_sub.Click, btn_multiply.Click, btn_divide.Click, btn_add.Click
         'operators (+,-,*,/) input
 
         Dim b_arith As Button = sender
-
+        Dim b_string As String = b_arith.Text
         If txtbox_display.Text <> "0" And txtbox_display.Text <> "-------INPUT ERROR-------" Then
-            txtbox_display.Text += b_arith.Text
+            txtbox_display.Text += b_string(1)
             ans = 0
         Else
-            If b_arith.Text = "-" Then
+            If b_string(1) = "-" Then
                 txtbox_display.Text = "-"
                 ans = 0
             End If
@@ -486,7 +490,7 @@ Public Class Calculator
         End If
     End Sub
 
-    Private Sub btn_backspace_Click(sender As Object, e As EventArgs) Handles btn_backspace.Click
+    Private Sub btn_backspace_Click(ByVal sender As System.Object, e As System.EventArgs) Handles btn_backspace.Click
         'backspace for delete
 
         If txtbox_display.Text.Length > 1 Then
@@ -496,25 +500,24 @@ Public Class Calculator
         End If
     End Sub
 
-    Private Sub Button_Brac_Click(sender As Object, e As EventArgs) Handles btn_openbrac.Click, btn_closebrac.Click
+    Private Sub Button_Brac_Click(ByVal sender As System.Object, e As System.EventArgs) Handles btn_openbrac.Click, btn_closebrac.Click
         'brackets opening '(' or closing ')'
 
         Dim b_brac As Button = sender
+        Dim b_string As String = b_brac.Text
         If txtbox_display.Text <> "0" And txtbox_display.Text <> "-------INPUT ERROR-------" And ans = 0 Then
-            txtbox_display.Text += b_brac.Text
+            txtbox_display.Text += b_string(1)
         Else
-            txtbox_display.Text = b_brac.Text
+            txtbox_display.Text = b_string(1)
             ans = 0
         End If
     End Sub
 
 
 
-    Private Sub btn_clr_Click(sender As Object, e As EventArgs) Handles btn_clr.Click
+    Private Sub btn_clr_Click(ByVal sender As System.Object, e As System.EventArgs) Handles btn_clr.Click
         'Clear the textbox_display
         ans = 0
         txtbox_display.Text = "0"
     End Sub
-
-
 End Class

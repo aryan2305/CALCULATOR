@@ -58,6 +58,8 @@
 
 
 Public Class Calculator
+    Dim flag_1 As Int16 = 0
+    Dim error_string As String = "-----INPUT ERROR-----"
     Dim ans As Double = 0
     ' Call this routine to compute the resulting value of an expression part
     Function DMAS(expr As String)
@@ -300,7 +302,7 @@ Public Class Calculator
         Dim sb As String = ""
         ' Iterate through the characters of input string starting at the position of final character
         For index = input.Length() - 1 To 0 Step -1
-
+        
             ' For each character perform a check if its value is '('
             If input(index) = "(" Or index = 0 Then
 
@@ -405,7 +407,20 @@ Public Class Calculator
     'To check the validity of the input expression
     Function validator(expr As String)
         Dim n As Int16 = expr.Length()
+        Dim count1 As Int16 = 0
+        Dim flag_valid As Int16 = 0
+        'To change the other brackets type to the standard brackets "(" and ")"
+
         For index = 0 To n - 1 Step 1
+            If expr(index) = "(" Then
+                count1 += 1
+            ElseIf expr(index) = ")" Then
+                count1 -= 1
+            End If
+            If count1 < 0 Then
+                Return "ERROR"
+            End If
+            ' To check if space is present in the expression
             If expr(index) = " " Then
                 Return "ERROR"
             End If
@@ -431,17 +446,33 @@ Public Class Calculator
                 End If
             End If
         Next
+        If count1 <> 0 Then
+            flag_valid = 1
+        End If
+        While count1 <> 0
+            If count1 > 0 Then
+                expr = expr.Insert(expr.Length(), ")")
+                count1 -= 1
+            End If
+        End While
+        If flag_valid = 1 Then
+            MessageBox.Show("We are giving the answer for this expression:     " + expr + "     .If not change it!")
+        End If
         Return Evaluator(expr)
     End Function
 
     Private Sub btn_equal_Click(ByVal sender As System.Object, e As System.EventArgs) Handles btn_equal.Click
         'Evaluate the expression
+
+        flag_1 = 1
         Try
             ans = validator(txtbox_display.Text.ToString)
-            txtbox_display.Text = ans
-
+            TextBox1.Text = ans
+            If txtbox_display.Text = "0." Then
+                txtbox_display.Text = "0"
+            End If
         Catch ex As Exception
-            txtbox_display.Text = "-------INPUT ERROR-------"
+            TextBox1.Text =error_string
 
         End Try
     End Sub
@@ -451,19 +482,31 @@ Public Class Calculator
 
         Dim b_num As Button = sender
         Dim b_string As String = b_num.Text
-        If txtbox_display.Text <> "0" And txtbox_display.Text <> "-------INPUT ERROR-------" And ans = 0 Then
+        If TextBox1.Text = error_string Or TextBox1.Text = "0" Then
+            TextBox1.Text = ""
+            txtbox_display.Text = ""
+            flag_1 = 0
+        End If
+        If txtbox_display.Text <> "0" And TextBox1.Text <> error_string And ans = 0 Then
             txtbox_display.Text += b_string(1)
+            flag_1 = 0
+
 
         Else
             txtbox_display.Text = b_string(1)
+            flag_1 = 0
             ans = 0
         End If
     End Sub
 
     Private Sub btn_dot_Click(ByVal sender As System.Object, e As System.EventArgs) Handles btn_dot.Click
         'dot '.' input
-
-        If txtbox_display.Text <> "-------INPUT ERROR-------" And ans = 0 Then
+        If TextBox1.Text = error_string Or TextBox1.Text = "0" Then
+            TextBox1.Text = ""
+            txtbox_display.Text = "0"
+            flag_1 = 0
+        End If
+        If TextBox1.Text <> error_string And ans = 0 Then
             txtbox_display.Text += "."
         Else
             txtbox_display.Text = "0."
@@ -475,10 +518,19 @@ Public Class Calculator
 
     Private Sub Button_Arith_Click(ByVal sender As System.Object, e As System.EventArgs) Handles btn_sub.Click, btn_multiply.Click, btn_divide.Click, btn_add.Click
         'operators (+,-,*,/) input
-
+        If TextBox1.Text = error_string Or TextBox1.Text = "0" Then
+            TextBox1.Text = ""
+            txtbox_display.Text = "0"
+            flag_1 = 0
+        End If
         Dim b_arith As Button = sender
         Dim b_string As String = b_arith.Text
-        If txtbox_display.Text <> "0" And txtbox_display.Text <> "-------INPUT ERROR-------" Then
+
+        If TextBox1.Text <> "" And flag_1 = 1 And TextBox1.Text <> error_string Then
+            txtbox_display.Text = TextBox1.Text
+            flag_1 = 0
+        End If
+        If txtbox_display.Text <> "0" And TextBox1.Text <> error_string Then
             txtbox_display.Text += b_string(1)
             ans = 0
         Else
@@ -505,7 +557,12 @@ Public Class Calculator
 
         Dim b_brac As Button = sender
         Dim b_string As String = b_brac.Text
-        If txtbox_display.Text <> "0" And txtbox_display.Text <> "-------INPUT ERROR-------" And ans = 0 Then
+        If TextBox1.Text = error_string Or TextBox1.Text = "0" Then
+            TextBox1.Text = ""
+            txtbox_display.Text = ""
+            flag_1 = 0
+        End If
+        If txtbox_display.Text <> "0" And TextBox1.Text <> error_string And ans = 0 Then
             txtbox_display.Text += b_string(1)
         Else
             txtbox_display.Text = b_string(1)
@@ -517,7 +574,11 @@ Public Class Calculator
 
     Private Sub btn_clr_Click(ByVal sender As System.Object, e As System.EventArgs) Handles btn_clr.Click
         'Clear the textbox_display
+
+
         ans = 0
+        TextBox1.Text = ""
         txtbox_display.Text = "0"
     End Sub
+
 End Class
